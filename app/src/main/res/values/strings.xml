@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <!-- Content descriptions-->
+    <string name="movie_picture_content_description">Movie Picture</string>
+    <string name="ProgressBar_content_description">ProgressBar for loading Poster</string>
+    <string name="error_message"> An error has occurred. Please check your Internet Connection.  </string>
+</resources>
