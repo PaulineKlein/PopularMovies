@@ -14,23 +14,27 @@ import com.squareup.picasso.Picasso;
 import java.net.URL;
 
 public class MovieInformation extends AppCompatActivity {
-    private TextView mtv_title;
-    private TextView mtv_release_date;
-    private TextView mtv_overview;
-    private TextView mtv_vote_counting;
-    private ImageView miv_back;
-    private ImageView miv_thumbnail;
-    private RatingBar mratingBar;
+
     private static final String TAG= "MovieInformation";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        TextView mtv_title;
+        TextView mtv_title_original;
+        TextView mtv_release_date;
+        TextView mtv_overview;
+        TextView mtv_vote_counting;
+        ImageView miv_back;
+        ImageView miv_thumbnail;
+        RatingBar mratingBar;
 
         Log.i(TAG, "Start MovieInformation");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_information);
 
         mtv_title = findViewById(R.id.tv_title);
+        mtv_title_original = findViewById(R.id.tv_title_original);
         mtv_release_date = findViewById(R.id.tv_release_date);
         mtv_overview = findViewById(R.id.tv_overview);
         mtv_vote_counting = findViewById(R.id.tv_vote_counting);
@@ -41,16 +45,17 @@ public class MovieInformation extends AppCompatActivity {
         Intent intentThatStarted = getIntent();
 
         if(intentThatStarted.hasExtra("Movie")){
-            Movie movie= intentThatStarted.getExtras().getParcelable("Movie");
+            Movie movie = intentThatStarted.getExtras().getParcelable("Movie");
             mtv_title.setText(movie.getmTitle());
+            mtv_title_original.setText(movie.getmOriginal_title());
             mtv_overview.setText(movie.getmOverview());
-            mtv_vote_counting.setText(movie.getmVote_count() +" votes");
+            mtv_vote_counting.setText(this.getResources().getQuantityString(R.plurals.votes, movie.getmVote_count(), movie.getmVote_count()));
 
-            mratingBar.setRating((float)(movie.getmVote_average())/2);
+            mratingBar.setRating((float) (movie.getmVote_average()) / 2);
             Log.i(TAG, "rate " + (float) movie.getmVote_average());
 
             String[] dateseparated = movie.getmRelease_date().split("-");
-            mtv_release_date.setText(dateseparated[2]+"/"+dateseparated[1]+"/"+dateseparated[0]);
+            mtv_release_date.setText(String.format(getString(R.string.release_date), dateseparated[2], dateseparated[1], dateseparated[0]));
 
             URL posterRequestUrl = NetworkUtils.buildPosterUrl(movie.getmPoster_path());
             Picasso.with(this)

@@ -11,29 +11,25 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Pauline on 25/02/2018.
- */
-
 public class JsonUtils {
 
     private static final String TAG= "JsonUtils";
 
-    public static final String JSON_RESULTS = "results";
-    public static final String JSON_VOTE_COUNT = "vote_count";
-    public static final String JSON_ID = "id";
-    public static final String JSON_VIDEO = "video";
-    public static final String JSON_VOTE_AVERAGE = "vote_average";
-    public static final String JSON_TITLE = "title";
-    public static final String JSON_POPULARITY = "popularity";
-    public static final String JSON_POSTER_PATH = "poster_path";
-    public static final String JSON_ORIGINAL_LANGUAGE = "original_language";
-    public static final String JSON_ORIGINAL_TITLE = "original_title";
-    public static final String JSON_GENRE_IDS = "genre_ids";
-    public static final String JSON_BACKDROP_PATH = "backdrop_path";
-    public static final String JSON_ADULT = "adult";
-    public static final String JSON_OVERIEW = "overview";
-    public static final String JSON_RELEASE_DATE = "release_date";
+    private static final String JSON_RESULTS = "results";
+    private static final String JSON_VOTE_COUNT = "vote_count";
+    private static final String JSON_ID = "id";
+    private static final String JSON_VIDEO = "video";
+    private static final String JSON_VOTE_AVERAGE = "vote_average";
+    private static final String JSON_TITLE = "title";
+    private static final String JSON_POPULARITY = "popularity";
+    private static final String JSON_POSTER_PATH = "poster_path";
+    private static final String JSON_ORIGINAL_LANGUAGE = "original_language";
+    private static final String JSON_ORIGINAL_TITLE = "original_title";
+    private static final String JSON_GENRE_IDS = "genre_ids";
+    private static final String JSON_BACKDROP_PATH = "backdrop_path";
+    private static final String JSON_ADULT = "adult";
+    private static final String JSON_OVERIEW = "overview";
+    private static final String JSON_RELEASE_DATE = "release_date";
 
     public static List<Movie> parseMovieJson(String json) throws JSONException {
 

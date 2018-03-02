@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="com.pklein.popularmovies.MainActivity"
     android:padding="3dp"
-    android:background="@color/colorVeryDark">
+    >
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_poster"

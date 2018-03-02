@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mErrorMessageDisplay;
     private PosterAdapter mPosterAdapter;
     private List<Movie> mListMovie;
+    private String mMovie_filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,24 +36,20 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
 
         GridLayoutManager layoutManager= new GridLayoutManager(this,3);
-
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
         mPosterAdapter = new PosterAdapter();
-
         mRecyclerView.setAdapter(mPosterAdapter);
 
-        loadMovieData();
-
+        mMovie_filter = "popular";
+        loadMovieData(mMovie_filter);
     }
 
-    private void loadMovieData() {
+    private void loadMovieData(String filter) {
         showPosterListView();
-       // String location = SunshinePreferences.getPreferredWeatherLocation(this);
-        new FetchPosterTask().execute("popular");
+        new FetchPosterTask().execute(filter);
     }
-
 
     public class FetchPosterTask extends AsyncTask<String, Void, List<Movie>> {
 
@@ -73,13 +73,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
                 mListMovie = JsonUtils.parseMovieJson(jsonMovieResponse);
-
-                //String[] listPoster = new String[mListMovie.size()];
-                //for (int i=0; i<mListMovie.size(); i++) {
-                //    URL posterRequestUrl = NetworkUtils.buildPosterUrl(mListMovie.get(i).getmPoster_path());
-                //    listPoster[i]= posterRequestUrl.toString();
-                //}
-
                 return mListMovie;
 
             } catch (Exception e) {
@@ -108,5 +101,31 @@ public class MainActivity extends AppCompatActivity {
     private void showErrorMessage() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.movie_filter, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_popular) {
+            mMovie_filter = "popular";
+            loadMovieData(mMovie_filter);
+            return true;
+        }
+
+        if (id == R.id.action_top_rated) {
+            mMovie_filter = "top_rated";
+            loadMovieData(mMovie_filter);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

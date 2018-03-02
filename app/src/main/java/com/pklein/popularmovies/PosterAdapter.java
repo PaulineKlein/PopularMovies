@@ -13,10 +13,6 @@ import com.squareup.picasso.Picasso;
 import java.net.URL;
 import java.util.List;
 
-/**
- * Created by Pauline on 22/02/2018.
- */
-
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdapterViewHolder> {
 
     private List<Movie> mMovieData;
@@ -61,12 +57,12 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
             @Override
             public void onClick(View v) {
 
-                Intent startChildActivityIntent = new Intent(context, MovieInformation.class);
-                if(MovieSelected != null)
-                {
-                    startChildActivityIntent.putExtra("Movie", MovieSelected);
-                }
-                context.startActivity(startChildActivityIntent);
+            Intent startChildActivityIntent = new Intent(context, MovieInformation.class);
+            if(MovieSelected != null)
+            {
+                startChildActivityIntent.putExtra("Movie", MovieSelected);
+            }
+            context.startActivity(startChildActivityIntent);
             }
         });
     }

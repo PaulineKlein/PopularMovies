@@ -12,10 +12,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-/**
- * Created by Pauline on 23/02/2018.
- */
-
 public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
@@ -29,19 +25,15 @@ public final class NetworkUtils {
     private static final String API_KEY_TO_USE = BuildConfig.API_KEY;
 
     /* PARAMETERS */
-    private static final String format = "json";
-
-   // private static final String filter = "popular"; // or top_rated
-
-    final static String size = "w185"; // or  "w92", "w154", "w185", "w342", "w500", "w780", "original"
+    private static final String size = "w185"; // or  "w92", "w154", "w185", "w342", "w500", "w780", "original"
 
 
     /**
-     * Builds the URL used to talk to the weather server using a location. This location is based
-     * on the query capabilities of the weather provider that we are using.
+     * Builds the URL used to talk to the API of themoviedb.org
+     * this URL will return all the informations used to display movies poster
      *
      * @param filter The filter for the list of Movies : popular or top_rated
-     * @return The URL to use to query the weather server.
+     * @return The URL to use to query the themoviedb server.
      */
     public static URL buildListUrl(String filter) {
         Uri builtUri = Uri.parse(BASE_LIST_URL+filter).buildUpon()
@@ -60,6 +52,13 @@ public final class NetworkUtils {
         return url;
     }
 
+    /**
+     * Builds the URL used to talk to the API of themoviedb.org
+     * this URL will return the image of a movie poster
+     *
+     * @param PosterNumber The key of the poster we want to display
+     * @return The URL to use to query the themoviedb server.
+     */
     public static URL buildPosterUrl(String PosterNumber) {
         Uri builtUri = Uri.parse(BASE_POSTER_URL+size+'/'+PosterNumber).buildUpon()
                 .appendQueryParameter(API_KEY, API_KEY_TO_USE)
