@@ -54,7 +54,7 @@ public class JsonUtils {
                 if(obj.has(JSON_VOTE_COUNT)){ mov.setmVote_count(obj.optInt(JSON_VOTE_COUNT));}
                 if(obj.has(JSON_ID)){ mov.setmId(obj.optInt(JSON_ID));}
                 if(obj.has(JSON_VIDEO)){ mov.setmVideo(obj.optBoolean(JSON_VIDEO));}
-                if(obj.has(JSON_VOTE_AVERAGE)){ mov.setmVote_average(obj.optInt(JSON_VOTE_AVERAGE));}
+                if(obj.has(JSON_VOTE_AVERAGE)){ mov.setmVote_average(obj.optDouble(JSON_VOTE_AVERAGE));}
                 if(obj.has(JSON_TITLE)){ mov.setmTitle(obj.optString(JSON_TITLE));}
                 if(obj.has(JSON_POPULARITY)){ mov.setmPopularity(obj.optDouble(JSON_POPULARITY));}
                 if(obj.has(JSON_POSTER_PATH)){ mov.setmPoster_path(obj.optString(JSON_POSTER_PATH));}

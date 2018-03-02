@@ -26,7 +26,7 @@ public final class NetworkUtils {
 
     /* API KEY !! */
     private static final String API_KEY = "api_key";
-    private static final String API_KEY_TO_USE = BuildConfig.API_KEY;;
+    private static final String API_KEY_TO_USE = BuildConfig.API_KEY;
 
     /* PARAMETERS */
     private static final String format = "json";

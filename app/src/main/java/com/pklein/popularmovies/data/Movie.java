@@ -1,18 +1,19 @@
 package com.pklein.popularmovies.data;
 
-import java.util.ArrayList;
-import java.util.Date;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 
 /**
  * Created by Pauline on 23/02/2018.
  */
 
-public class Movie {
+public class Movie implements Parcelable {
 
     private int mVote_count;
     private int mId;
     private boolean mVideo;
-    private int mVote_average;
+    private double mVote_average;
     private String mTitle;
     private double  mPopularity;
     private String mPoster_path;
@@ -27,7 +28,7 @@ public class Movie {
     public Movie(){
     }
 
-    public Movie(int vote_count, int id, boolean video, int vote_average, String title, double popularity, String poster_path, String original_language, String original_title, int[] genre_ids, String backdrop_path, boolean adult, String overview, String release_date ){
+    public Movie(int vote_count, int id, boolean video, double vote_average, String title, double popularity, String poster_path, String original_language, String original_title, int[] genre_ids, String backdrop_path, boolean adult, String overview, String release_date ){
 
         mVote_count = vote_count;
         mId = id;
@@ -44,6 +45,61 @@ public class Movie {
         mOverview = overview;
         mRelease_date=  release_date;
     }
+
+    public Movie(Parcel in) {
+        mVote_count = in.readInt();
+        mId = in.readInt();
+       //mVideo = (Boolean) in.readValue( null );
+        mVideo = in.readInt() != 0;
+        mVote_average = in.readDouble();
+        mTitle = in.readString();
+        mPopularity = in.readDouble();
+        mPoster_path = in.readString();
+        mOriginal_language = in.readString();
+        mOriginal_title = in.readString();
+        mGenre_ids = new int[in.readInt()];
+        in.readIntArray(mGenre_ids);
+        mBackdrop_path = in.readString();
+        mAdult = in.readInt() != 0;
+        mOverview = in.readString();
+        mRelease_date=  in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mVote_count);
+        dest.writeInt(mId);
+        //dest.writeValue(mVideo);  // after I need to use boolean myBool = (Boolean) source.readValue( null );
+        dest.writeInt(mVideo ? 1 : 0);
+        dest.writeDouble(mVote_average);
+        dest.writeString(mTitle);
+        dest.writeDouble(mPopularity);
+        dest.writeString(mPoster_path);
+        dest.writeString(mOriginal_language);
+        dest.writeString(mOriginal_title);
+        dest.writeInt(mGenre_ids.length);
+        dest.writeIntArray(mGenre_ids);
+        dest.writeString(mBackdrop_path);
+        dest.writeInt(mAdult ? 1 : 0);
+        dest.writeString(mOverview);
+        dest.writeString(mRelease_date);
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public int getmVote_count() {
         return mVote_count;
@@ -69,11 +125,11 @@ public class Movie {
         this.mVideo = mVideo;
     }
 
-    public int getmVote_average() {
+    public double getmVote_average() {
         return mVote_average;
     }
 
-    public void setmVote_average(int mVote_average) {
+    public void setmVote_average(double mVote_average) {
         this.mVote_average = mVote_average;
     }
 
@@ -105,21 +161,15 @@ public class Movie {
         return mOriginal_language;
     }
 
-    public void setmOriginal_language(String mOriginal_language) {
-        this.mOriginal_language = mOriginal_language;
-    }
+    public void setmOriginal_language(String mOriginal_language) {this.mOriginal_language = mOriginal_language; }
 
     public String getmOriginal_title() {
         return mOriginal_title;
     }
 
-    public void setmOriginal_title(String mOriginal_title) {
-        this.mOriginal_title = mOriginal_title;
-    }
+    public void setmOriginal_title(String mOriginal_title) { this.mOriginal_title = mOriginal_title;}
 
-    public int[] getmGenre_ids() {
-        return mGenre_ids;
-    }
+    public int[] getmGenre_ids() { return mGenre_ids; }
 
     public void setmGenre_ids(int[] mGenre_ids) {
         this.mGenre_ids = mGenre_ids;

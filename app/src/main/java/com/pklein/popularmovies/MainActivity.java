@@ -1,26 +1,18 @@
 package com.pklein.popularmovies;
 
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.pklein.popularmovies.data.Movie;
 import com.pklein.popularmovies.tools.JsonUtils;
 import com.pklein.popularmovies.tools.NetworkUtils;
-import com.squareup.picasso.Picasso;
-
 import java.net.URL;
 import java.util.List;
-
-import static com.pklein.popularmovies.tools.JsonUtils.parseMovieJson;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,11 +27,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_poster);
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
+        mRecyclerView = findViewById(R.id.recyclerview_poster);
+        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
 
-        StaggeredGridLayoutManager layoutManager= new StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL);
+        GridLayoutManager layoutManager= new GridLayoutManager(this,3);
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
@@ -59,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class FetchPosterTask extends AsyncTask<String, Void, String[]> {
+    public class FetchPosterTask extends AsyncTask<String, Void, List<Movie>> {
 
         @Override
         protected void onPreExecute() {
@@ -68,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected List<Movie> doInBackground(String... params) {
 
             /* If there's no URL, there's nothing to look up. */
             if (params.length == 0) {
@@ -82,13 +74,13 @@ public class MainActivity extends AppCompatActivity {
                 String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
                 mListMovie = JsonUtils.parseMovieJson(jsonMovieResponse);
 
-                String[] listPoster = new String[mListMovie.size()];
-                for (int i=0; i<mListMovie.size(); i++) {
-                    URL posterRequestUrl = NetworkUtils.buildPosterUrl(mListMovie.get(i).getmPoster_path());
-                    listPoster[i]= posterRequestUrl.toString();
-                }
+                //String[] listPoster = new String[mListMovie.size()];
+                //for (int i=0; i<mListMovie.size(); i++) {
+                //    URL posterRequestUrl = NetworkUtils.buildPosterUrl(mListMovie.get(i).getmPoster_path());
+                //    listPoster[i]= posterRequestUrl.toString();
+                //}
 
-                return listPoster;
+                return mListMovie;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -97,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String[] movieData) {
+        protected void onPostExecute(List<Movie> movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showPosterListView();
