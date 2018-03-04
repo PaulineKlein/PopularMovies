@@ -5,6 +5,9 @@
     <!-- Content descriptions-->
     <string name="movie_picture_content_description">Movie Picture</string>
     <string name="rating_bar_content_description">Vote Average</string>
+    <string name="title_content_description">Title</string>
+    <string name="original_title_content_description">Original Title</string>
+    <string name="vote_content_description">Vote</string>
     <string name="ProgressBar_content_description">ProgressBar for loading Poster</string>
     <string name="release_date_label"> Release Date : </string>
     <string name="overview_label"> Overview : </string>
@@ -16,7 +19,6 @@
     </plurals>
 
     <string name="release_date">%1$s/%2$s/%3$s </string>
-
 
     <!-- Menu -->
     <string name="action_top_rated"> Top Rated </string>

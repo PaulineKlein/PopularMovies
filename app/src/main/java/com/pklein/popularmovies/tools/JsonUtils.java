@@ -36,7 +36,7 @@ public class JsonUtils {
         Log.i(TAG, "Start parseMovieJson");
 
         JSONObject MovieJson = new JSONObject(json);
-        List<Movie> ListMovie = new ArrayList<Movie>();
+        List<Movie> ListMovie = new ArrayList<>();
 
         if (MovieJson.has(JSON_RESULTS)) {
             JSONArray ListMoviesJson = MovieJson.getJSONArray(JSON_RESULTS);
