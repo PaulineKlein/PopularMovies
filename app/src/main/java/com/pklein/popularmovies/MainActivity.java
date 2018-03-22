@@ -1,7 +1,9 @@
 package com.pklein.popularmovies;
 
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,8 +25,13 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mLoadingIndicator;
     private TextView mErrorMessageDisplay;
     private PosterAdapter mPosterAdapter;
+    private GridLayoutManager mLayoutManager;
     private List<Movie> mListMovie;
-    private String mMovie_filter;
+    private String mMovie_filter="";
+
+    private Parcelable mSavedRecyclerViewState;
+    private static final String RECYCLER_STATE = "recycler";
+    private static final String LIFECYCLE_MOVIE_FILTER_KEY = "filter";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +42,28 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
         mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
 
-        GridLayoutManager layoutManager= new GridLayoutManager(this,3);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mLayoutManager= new GridLayoutManager(this,3);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
         mPosterAdapter = new PosterAdapter();
         mRecyclerView.setAdapter(mPosterAdapter);
 
-        mMovie_filter = "popular";
-        loadMovieData(mMovie_filter);
+        // if there is no internet connection show error message
+        if(!NetworkUtils.isconnected((ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE)))
+        {
+            showErrorMessage();
+        }
+        else {
+            if (savedInstanceState != null) { // if a filter is already saved, read it
+                if (savedInstanceState.containsKey(LIFECYCLE_MOVIE_FILTER_KEY)) {
+                    mMovie_filter = savedInstanceState.getString(LIFECYCLE_MOVIE_FILTER_KEY);
+                }
+            } else {
+                mMovie_filter = "popular";
+            }
+            loadMovieData(mMovie_filter);
+        }
     }
 
     private void loadMovieData(String filter) {
@@ -87,6 +107,10 @@ public class MainActivity extends AppCompatActivity {
             if (movieData != null) {
                 showPosterListView();
                 mPosterAdapter.setMovieData(movieData);
+                // if a scroll position is saved, read it.
+                if(mSavedRecyclerViewState!=null){
+                    mLayoutManager.onRestoreInstanceState(mSavedRecyclerViewState);
+                }
             } else {
                 showErrorMessage();
             }
@@ -116,16 +140,62 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_popular) {
             mMovie_filter = "popular";
+            //clear save instance to avoid bad scroll position when we switch between item menu
+            mSavedRecyclerViewState = null;
             loadMovieData(mMovie_filter);
             return true;
         }
 
         if (id == R.id.action_top_rated) {
             mMovie_filter = "top_rated";
+            //clear save instance to avoid bad scroll position when we switch between item menu
+            mSavedRecyclerViewState = null;
             loadMovieData(mMovie_filter);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // save filter + recyclerview position :
+        outState.putString(LIFECYCLE_MOVIE_FILTER_KEY, mMovie_filter);
+        outState.putParcelable(RECYCLER_STATE,mLayoutManager.onSaveInstanceState());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //It will restore recycler view at same position
+        if (savedInstanceState != null) {
+            mSavedRecyclerViewState = savedInstanceState.getParcelable(RECYCLER_STATE);
+        }
+    }
+
 }

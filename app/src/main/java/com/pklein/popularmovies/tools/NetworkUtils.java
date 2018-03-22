@@ -1,5 +1,7 @@
 package com.pklein.popularmovies.tools;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -100,5 +102,12 @@ public final class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    public static boolean isconnected(ConnectivityManager cm){
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean Connect = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+            return Connect;
     }
 }
