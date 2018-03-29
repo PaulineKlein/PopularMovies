@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private ProgressBar mLoadingIndicator;
     private TextView mErrorMessageDisplay;
@@ -105,12 +107,16 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(List<Movie> movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
-                showPosterListView();
-                mPosterAdapter.setMovieData(movieData);
                 // if a scroll position is saved, read it.
-                if(mSavedRecyclerViewState!=null){
+                if(mSavedRecyclerViewState!=null) {
                     mLayoutManager.onRestoreInstanceState(mSavedRecyclerViewState);
                 }
+                else { // create a new layout to return to top of the screen
+                    mLayoutManager= new GridLayoutManager(getApplicationContext(),3);
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                }
+                showPosterListView();
+                mPosterAdapter.setMovieData(movieData);
             } else {
                 showErrorMessage();
             }
@@ -140,7 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_popular) {
             mMovie_filter = "popular";
-            //clear save instance to avoid bad scroll position when we switch between item menu
+            // we need to empty saveInstanceState => setup a new LayoutManager
+            //mLayoutManager= new GridLayoutManager(this,3);
+            //mRecyclerView.setLayoutManager(mLayoutManager);
             mSavedRecyclerViewState = null;
             loadMovieData(mMovie_filter);
             return true;
@@ -148,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_top_rated) {
             mMovie_filter = "top_rated";
-            //clear save instance to avoid bad scroll position when we switch between item menu
+            //mLayoutManager= new GridLayoutManager(this,3);
+            //mRecyclerView.setLayoutManager(mLayoutManager);
             mSavedRecyclerViewState = null;
             loadMovieData(mMovie_filter);
             return true;
