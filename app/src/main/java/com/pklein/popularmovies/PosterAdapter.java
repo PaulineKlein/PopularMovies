@@ -46,7 +46,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
         final Context context = posterAdapterViewHolder.itemView.getContext();
         final Movie MovieSelected = mMovieData.get(position);
 
-        URL posterRequestUrl = NetworkUtils.buildPosterUrl(mMovieData.get(position).getmPoster_path());
+        URL posterRequestUrl = NetworkUtils.buildPosterUrl(mMovieData.get(position).getmPoster_path(), "w342" );
         String movieUrlForThisPos = posterRequestUrl.toString();
         Picasso.with(context)
                 .load(movieUrlForThisPos)

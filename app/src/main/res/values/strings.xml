@@ -30,5 +30,6 @@
     <!-- Menu -->
     <string name="action_top_rated"> Top Rated </string>
     <string name="action_popular"> Most Popular </string>
+    <string name="action_favorite"> Favorites </string>
 
 </resources>

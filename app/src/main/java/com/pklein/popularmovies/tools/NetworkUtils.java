@@ -27,7 +27,7 @@ public final class NetworkUtils {
     private static final String API_KEY_TO_USE = BuildConfig.API_KEY;
 
     /* PARAMETERS */
-    private static final String size = "w185"; // or  "w92", "w154", "w185", "w342", "w500", "w780", "original"
+    private static final String size = "w342"; // or  "w92", "w154", "w185", "w342", "w500", "w780", "original"
 
 
     /**
@@ -59,9 +59,10 @@ public final class NetworkUtils {
      * this URL will return the image of a movie poster
      *
      * @param PosterNumber The key of the poster we want to display
+     * @param size The size of the poster we want to display (it can be "w92", "w154", "w185", "w342", "w500", "w780", "original")
      * @return The URL to use to query the themoviedb server.
      */
-    public static URL buildPosterUrl(String PosterNumber) {
+    public static URL buildPosterUrl(String PosterNumber, String size) {
         Uri builtUri = Uri.parse(BASE_POSTER_URL+size+'/'+PosterNumber).buildUpon()
                 .appendQueryParameter(API_KEY, API_KEY_TO_USE)
                 .build();

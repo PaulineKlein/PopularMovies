@@ -1,6 +1,9 @@
 package com.pklein.popularmovies;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -14,10 +17,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.pklein.popularmovies.data.FavoriteMovieContract;
 import com.pklein.popularmovies.data.Movie;
 import com.pklein.popularmovies.tools.JsonUtils;
 import com.pklein.popularmovies.tools.NetworkUtils;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -84,22 +90,30 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected List<Movie> doInBackground(String... params) {
 
-            /* If there's no URL, there's nothing to look up. */
+            /* If there's no filter, there's nothing to look up. */
             if (params.length == 0) {
                 return null;
             }
 
             String filter = params[0];
-            URL movieRequestUrl = NetworkUtils.buildListUrl(filter);
 
-            try {
-                String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
-                mListMovie = JsonUtils.parseMovieJson(jsonMovieResponse);
+            if(filter.equals("favorite")) // then we check data inside database :
+            {
+                mListMovie = getMoviesfromDatabase();
                 return mListMovie;
+            }
+            else { // then we check data from the API :
+                URL movieRequestUrl = NetworkUtils.buildListUrl(filter);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                try {
+                    String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
+                    mListMovie = JsonUtils.parseMovieJson(jsonMovieResponse);
+                    return mListMovie;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
         }
 
@@ -133,6 +147,45 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
+    private List<Movie> getMoviesfromDatabase(){
+        Log.i(TAG, "getMoviesfromDatabase ");
+
+        List<Movie> ListMovie = new ArrayList<>();
+        Uri uri =FavoriteMovieContract.FavoriteMovie.CONTENT_URI;
+        String[] projection = null; // we want all columns return
+        String sortOrder = FavoriteMovieContract.FavoriteMovie.COLUMN_TITLE;
+
+        Cursor cursor = getContentResolver().query(uri,projection,null,null,sortOrder );
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                Log.i(TAG,"COLUMN_MOVIE_ID " +cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_MOVIE_ID));
+                Movie mov = new Movie();
+                mov.setmVote_count(cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_VOTE_COUNT)));
+                mov.setmId(cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_MOVIE_ID)));
+                mov.setmVideo(cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_VIDEO)) != 0);
+                mov.setmVote_average(cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_VOTE_AVERAGE)));
+                mov.setmTitle(cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_TITLE)));
+                mov.setmPopularity(cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_POPULARITY)));
+                mov.setmPoster_path(cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_POSTER_PATH)));
+                mov.setmOriginal_language(cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_ORIGINAL_LANGUAGE)));
+                mov.setmOriginal_title(cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_ORIGINAL_TITLE)));
+                mov.setmBackdrop_path(cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_BACKDROP_PATH)));
+                mov.setmAdult(cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_ADULT))!= 0);
+                mov.setmOverview(cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_OVERVIEWS)));
+                mov.setmRelease_date(cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.FavoriteMovie.COLUMN_RELEASE_DATE)));
+                mov.setmGenre_ids(new int[1]);
+
+                ListMovie.add(mov);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+        Log.i(TAG, "end getMoviesfromDatabase ");
+        return ListMovie;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -146,9 +199,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_popular) {
             mMovie_filter = "popular";
-            // we need to empty saveInstanceState => setup a new LayoutManager
-            //mLayoutManager= new GridLayoutManager(this,3);
-            //mRecyclerView.setLayoutManager(mLayoutManager);
             mSavedRecyclerViewState = null;
             loadMovieData(mMovie_filter);
             return true;
@@ -156,8 +206,13 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_top_rated) {
             mMovie_filter = "top_rated";
-            //mLayoutManager= new GridLayoutManager(this,3);
-            //mRecyclerView.setLayoutManager(mLayoutManager);
+            mSavedRecyclerViewState = null;
+            loadMovieData(mMovie_filter);
+            return true;
+        }
+
+        if (id == R.id.action_favorite) {
+            mMovie_filter = "favorite";
             mSavedRecyclerViewState = null;
             loadMovieData(mMovie_filter);
             return true;

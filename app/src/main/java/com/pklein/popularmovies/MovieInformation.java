@@ -75,14 +75,17 @@ public class MovieInformation extends AppCompatActivity {
             misFavorite=isFavorite(movie.getmId());
             setFavoriteIcon(misFavorite);
 
-            URL posterRequestUrl = NetworkUtils.buildPosterUrl(movie.getmPoster_path());
+            URL posterRequestUrl = NetworkUtils.buildPosterUrl(movie.getmBackdrop_path(), "w500");
             Picasso.with(this)
                     .load(posterRequestUrl.toString())
                     .into(miv_back);
 
+            URL posterRequestUrl2 = NetworkUtils.buildPosterUrl(movie.getmPoster_path(), "w342");
             Picasso.with(this)
-                    .load(posterRequestUrl.toString())
+                    .load(posterRequestUrl2.toString())
                     .into(miv_thumbnail);
+
+            Log.i(TAG, "url1 " + posterRequestUrl + " url2 " + posterRequestUrl2 );
 
             miv_favorite.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

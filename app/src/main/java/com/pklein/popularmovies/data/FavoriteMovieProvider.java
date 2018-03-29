@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 public class FavoriteMovieProvider extends ContentProvider {
+
+    /* This class has been set up thanks to code from https://github.com/udacity/android-content-provider */
+
     private static final String TAG = FavoriteMovieProvider.class.getSimpleName();
     private static final UriMatcher mUriMatcher = buildUriMatcher();
     private FavoriteMovieDbHelper mFMDbHelper;
@@ -63,25 +66,25 @@ public class FavoriteMovieProvider extends ContentProvider {
             // All Movies selected
             case FAV_MOVIES:{
                 retCursor = mFMDbHelper.getReadableDatabase().query(
-                        FavoriteMovieContract.FavoriteMovie.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                        FavoriteMovieContract.FavoriteMovie.TABLE_NAME, // The table to query
+                        projection,                                     // The columns to return
+                        selection,                                      // The columns for the WHERE clause
+                        selectionArgs,                                  // The values for the WHERE clause
+                        null,                                   // don't group the rows
+                        null,                                    // don't filter by row groups
+                        sortOrder);                                    // The sort order
                 return retCursor;
             }
             // Individual Movie based on Id selected
             case FAV_MOVIES_WITH_ID:{
                 retCursor = mFMDbHelper.getReadableDatabase().query(
-                        FavoriteMovieContract.FavoriteMovie.TABLE_NAME,
-                        projection,
-                        FavoriteMovieContract.FavoriteMovie.COLUMN_MOVIE_ID + " = ?",
-                        new String[] {String.valueOf(ContentUris.parseId(uri))},
-                        null,
-                        null,
-                        sortOrder);
+                        FavoriteMovieContract.FavoriteMovie.TABLE_NAME,                         // The table to query
+                        projection,                                                             // The columns to return
+                        FavoriteMovieContract.FavoriteMovie.COLUMN_MOVIE_ID + " = ?",   // The columns for the WHERE clause
+                        new String[] {String.valueOf(ContentUris.parseId(uri))},                // The values for the WHERE clause
+                        null,                                                           // don't group the rows
+                        null,                                                            // don't filter by row groups
+                        sortOrder);                                                             // The sort order
                 return retCursor;
             }
             default:{
