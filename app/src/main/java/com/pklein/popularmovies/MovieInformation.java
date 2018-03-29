@@ -3,8 +3,12 @@ package com.pklein.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,11 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pklein.popularmovies.data.FavoriteMovieContract;
-import com.pklein.popularmovies.data.FavoriteMovieDbHelper;
 import com.pklein.popularmovies.data.Movie;
 import com.pklein.popularmovies.tools.NetworkUtils;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 
 public class MovieInformation extends AppCompatActivity {
@@ -29,7 +36,8 @@ public class MovieInformation extends AppCompatActivity {
     private ImageButton miv_favorite;
     private boolean misFavorite;
     private Movie movie;
-    private FavoriteMovieDbHelper db;
+    private URL mPosterRequestUrl;
+    private URL mPosterRequestUrl2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +83,35 @@ public class MovieInformation extends AppCompatActivity {
             misFavorite=isFavorite(movie.getmId());
             setFavoriteIcon(misFavorite);
 
-            URL posterRequestUrl = NetworkUtils.buildPosterUrl(movie.getmBackdrop_path(), "w500");
-            Picasso.with(this)
-                    .load(posterRequestUrl.toString())
-                    .into(miv_back);
+            // if we are not connected try from internal storage :
+            if(!NetworkUtils.isconnected((ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE)))
+            {
+                String path = Environment.getExternalStorageDirectory().getPath() + File.separator + "MyMoviesPosters"+ File.separator +"Movie_"+movie.getmId()+".jpg";
+                Picasso.with(this)
+                        .load("file://"+path)
+                        .error(R.drawable.ic_local_movies)
+                        .into(miv_back);
 
-            URL posterRequestUrl2 = NetworkUtils.buildPosterUrl(movie.getmPoster_path(), "w342");
-            Picasso.with(this)
-                    .load(posterRequestUrl2.toString())
-                    .into(miv_thumbnail);
+                Picasso.with(this)
+                        .load("file://"+path)
+                        .error(R.drawable.ic_local_movies)
+                        .into(miv_thumbnail);
+            }
+            else {
+                mPosterRequestUrl = NetworkUtils.buildPosterUrl(movie.getmBackdrop_path(), "w500");
+                Picasso.with(this)
+                        .load(mPosterRequestUrl.toString())
+                        .error(R.drawable.ic_local_movies)
+                        .into(miv_back);
 
-            Log.i(TAG, "url1 " + posterRequestUrl + " url2 " + posterRequestUrl2 );
+                mPosterRequestUrl2 = NetworkUtils.buildPosterUrl(movie.getmPoster_path(), "w342");
+                Picasso.with(this)
+                        .load(mPosterRequestUrl2.toString())
+                        .error(R.drawable.ic_local_movies)
+                        .into(miv_thumbnail);
+
+                Log.i(TAG, "url1 " + mPosterRequestUrl + " url2 " + mPosterRequestUrl2);
+            }
 
             miv_favorite.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -94,6 +120,10 @@ public class MovieInformation extends AppCompatActivity {
                         misFavorite = false;
                         Uri uri = FavoriteMovieContract.FavoriteMovie.buildMovieUri(movie.getmId());
                         int result = getContentResolver().delete(uri, null, null);
+
+                        //delete image too
+                        File file = new File(Environment.getExternalStorageDirectory().getPath() +File.separator + "MyMoviesPosters","Movie_"+movie.getmId()+".jpg");
+                        file.delete();
 
                         if(result > -1)
                             showToast(getString(R.string.delete_favorite));
@@ -107,13 +137,17 @@ public class MovieInformation extends AppCompatActivity {
                         ContentValues contentValues = transformMovieToContentValues(movie);
                         Uri result = getContentResolver().insert(uri,contentValues );
 
+                        //save image too : https://stackoverflow.com/questions/32799353/saving-image-from-url-using-picasso
+                        Picasso.with(getApplicationContext())
+                                .load(mPosterRequestUrl2.toString())
+                                .into(generateTarget(movie.getmId()));
+
                         if(result !=null)
                             showToast(getString(R.string.save_favorite));
                         else
                             showToast(getString(R.string.error_favorite));
                     }
                     setFavoriteIcon(misFavorite);
-
                 }
             });
         }
@@ -121,6 +155,44 @@ public class MovieInformation extends AppCompatActivity {
         Log.i(TAG, "End MovieInformation");
     }
 
+    private Target generateTarget(final int nameFile){
+        Target target = new Target(){
+
+            @Override
+            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        File myDir = new File(Environment.getExternalStorageDirectory().getPath() +File.separator + "MyMoviesPosters");
+
+                        if (!myDir.exists()) {
+                            myDir.mkdirs();
+                        }
+
+                        File file = new File(myDir,"Movie_"+nameFile+".jpg");
+                        try {
+                            file.createNewFile();
+                            FileOutputStream ostream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, ostream);
+                            ostream.flush();
+                            ostream.close();
+                        } catch (IOException e) {
+                            Log.e(TAG,"IOException : "+ e.getLocalizedMessage());
+                        }
+                    }
+                }).start();
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {}
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {}
+        };
+        return target;
+    }
 
     private void setFavoriteIcon(boolean isFavorite)
     {

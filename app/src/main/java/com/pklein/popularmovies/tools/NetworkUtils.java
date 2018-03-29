@@ -3,12 +3,16 @@ package com.pklein.popularmovies.tools;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import com.pklein.popularmovies.BuildConfig;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -77,7 +81,6 @@ public final class NetworkUtils {
         Log.v(TAG, "Built URI " + url);
         return url;
     }
-
 
     /**
      * This method returns the entire result from the HTTP response.

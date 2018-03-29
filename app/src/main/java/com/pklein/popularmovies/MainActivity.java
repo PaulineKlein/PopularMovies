@@ -1,12 +1,17 @@
 package com.pklein.popularmovies;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.ContentValues;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // to be able to download and display image file for favorite filter
+        if (shouldAskPermissions()) {
+            askPermissions();
+        }
         mRecyclerView = findViewById(R.id.recyclerview_poster);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
         mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
@@ -57,21 +66,14 @@ public class MainActivity extends AppCompatActivity {
         mPosterAdapter = new PosterAdapter();
         mRecyclerView.setAdapter(mPosterAdapter);
 
-        // if there is no internet connection show error message
-        if(!NetworkUtils.isconnected((ConnectivityManager)this.getSystemService(this.CONNECTIVITY_SERVICE)))
-        {
-            showErrorMessage();
-        }
-        else {
-            if (savedInstanceState != null) { // if a filter is already saved, read it
-                if (savedInstanceState.containsKey(LIFECYCLE_MOVIE_FILTER_KEY)) {
-                    mMovie_filter = savedInstanceState.getString(LIFECYCLE_MOVIE_FILTER_KEY);
-                }
-            } else {
-                mMovie_filter = "popular";
+        if (savedInstanceState != null) { // if a filter is already saved, read it
+            if (savedInstanceState.containsKey(LIFECYCLE_MOVIE_FILTER_KEY)) {
+                mMovie_filter = savedInstanceState.getString(LIFECYCLE_MOVIE_FILTER_KEY);
             }
-            loadMovieData(mMovie_filter);
+        } else {
+            mMovie_filter = "popular";
         }
+        loadMovieData(mMovie_filter);
     }
 
     private void loadMovieData(String filter) {
@@ -103,16 +105,22 @@ public class MainActivity extends AppCompatActivity {
                 return mListMovie;
             }
             else { // then we check data from the API :
-                URL movieRequestUrl = NetworkUtils.buildListUrl(filter);
-
-                try {
-                    String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
-                    mListMovie = JsonUtils.parseMovieJson(jsonMovieResponse);
-                    return mListMovie;
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                // if there is no internet connection show error message
+                if(!NetworkUtils.isconnected((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)))
+                {
                     return null;
+                }
+                else {
+                    URL movieRequestUrl = NetworkUtils.buildListUrl(filter);
+                    try {
+                        String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
+                        mListMovie = JsonUtils.parseMovieJson(jsonMovieResponse);
+                        return mListMovie;
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
                 }
             }
         }
@@ -186,6 +194,25 @@ public class MainActivity extends AppCompatActivity {
         return ListMovie;
     }
 
+    /* with the Help of https://stackoverflow.com/questions/8854359/exception-open-failed-eacces-permission-denied-on-android */
+    protected boolean shouldAskPermissions() {
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            || ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))){
+
+            return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+        }
+            return false;
+    }
+
+    @TargetApi(23)
+    protected void askPermissions() {
+        String[] permissions = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE"
+        };
+        int requestCode = 200;
+        requestPermissions(permissions, requestCode);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
