@@ -23,15 +23,11 @@ public final class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/";
-
     private static final String BASE_LIST_URL = "http://api.themoviedb.org/3/movie/";
 
     /* API KEY !! */
     private static final String API_KEY = "api_key";
     private static final String API_KEY_TO_USE = BuildConfig.API_KEY;
-
-    /* PARAMETERS */
-    private static final String size = "w342"; // or  "w92", "w154", "w185", "w342", "w500", "w780", "original"
 
 
     /**
@@ -79,6 +75,31 @@ public final class NetworkUtils {
         }
 
         Log.v(TAG, "Built URI " + url);
+        return url;
+    }
+
+    /**
+     * Builds the URL used to talk to the API of themoviedb.org
+     * this URL will return all the reviews or trailers for one Movie
+     *
+     * @param movieId The id of the movie we want to display details
+     * @param filter The filter : reviews or videos
+     * @return The URL to use to query the themoviedb server.
+     */
+    public static URL buildMovieDetailUrl(int movieId,String filter) {
+        Uri builtUri = Uri.parse(BASE_LIST_URL+movieId+"/"+filter).buildUpon()
+                .appendQueryParameter(API_KEY, API_KEY_TO_USE)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URI " + url);
+
         return url;
     }
 

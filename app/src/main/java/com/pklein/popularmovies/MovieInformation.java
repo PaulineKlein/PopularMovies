@@ -4,15 +4,16 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -30,7 +31,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-public class MovieInformation extends AppCompatActivity {
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
+public class MovieInformation extends Fragment {
 
     private static final String TAG= MovieInformation.class.getSimpleName();
     private ImageButton miv_favorite;
@@ -39,8 +42,25 @@ public class MovieInformation extends AppCompatActivity {
     private URL mPosterRequestUrl;
     private URL mPosterRequestUrl2;
 
+   // public static final String ARG_PAGE = "ARG_PAGE";
+   // private int mPage;
+
+    public static MovieInformation newInstance(/*int page*/) {
+        Bundle args = new Bundle();
+        //args.putInt(ARG_PAGE, page);
+        MovieInformation fragment = new MovieInformation();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+     //   mPage = getArguments().getInt(ARG_PAGE);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
         TextView mtv_title;
         TextView mtv_title_original;
@@ -53,19 +73,20 @@ public class MovieInformation extends AppCompatActivity {
 
         Log.i(TAG, "Start MovieInformation");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_information);
+        //setContentView(R.layout.movie_information);
+        View view = inflater.inflate(R.layout.movie_information, container, false);
 
-        mtv_title = findViewById(R.id.tv_title);
-        mtv_title_original = findViewById(R.id.tv_title_original);
-        mtv_release_date = findViewById(R.id.tv_release_date);
-        mtv_overview = findViewById(R.id.tv_overview);
-        mtv_vote_counting = findViewById(R.id.tv_vote_counting);
-        miv_back = findViewById(R.id.image_iv_back);
-        miv_thumbnail = findViewById(R.id.image_iv_thumbnail);
-        mratingBar = findViewById(R.id.ratingBar);
-        miv_favorite = findViewById(R.id.image_iv_favorite);
+        mtv_title = view.findViewById(R.id.tv_title);
+        mtv_title_original = view.findViewById(R.id.tv_title_original);
+        mtv_release_date = view.findViewById(R.id.tv_release_date);
+        mtv_overview = view.findViewById(R.id.tv_overview);
+        mtv_vote_counting = view.findViewById(R.id.tv_vote_counting);
+        miv_back = view.findViewById(R.id.image_iv_back);
+        miv_thumbnail = view.findViewById(R.id.image_iv_thumbnail);
+        mratingBar = view.findViewById(R.id.ratingBar);
+        miv_favorite = view.findViewById(R.id.image_iv_favorite);
 
-        Intent intentThatStarted = getIntent();
+        Intent intentThatStarted = getActivity().getIntent();
 
         if(intentThatStarted.hasExtra("Movie")){
             movie = intentThatStarted.getExtras().getParcelable("Movie");
@@ -84,28 +105,28 @@ public class MovieInformation extends AppCompatActivity {
             setFavoriteIcon(misFavorite);
 
             // if we are not connected try from internal storage :
-            if(!NetworkUtils.isconnected((ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE)))
+            if(!NetworkUtils.isconnected((ConnectivityManager) getActivity().getSystemService(CONNECTIVITY_SERVICE)))
             {
                 String path = Environment.getExternalStorageDirectory().getPath() + File.separator + "MyMoviesPosters"+ File.separator +"Movie_"+movie.getmId()+".jpg";
-                Picasso.with(this)
+                Picasso.with(getActivity())
                         .load("file://"+path)
                         .error(R.drawable.ic_local_movies)
                         .into(miv_back);
 
-                Picasso.with(this)
+                Picasso.with(getActivity())
                         .load("file://"+path)
                         .error(R.drawable.ic_local_movies)
                         .into(miv_thumbnail);
             }
             else {
                 mPosterRequestUrl = NetworkUtils.buildPosterUrl(movie.getmBackdrop_path(), "w500");
-                Picasso.with(this)
+                Picasso.with(getActivity())
                         .load(mPosterRequestUrl.toString())
                         .error(R.drawable.ic_local_movies)
                         .into(miv_back);
 
                 mPosterRequestUrl2 = NetworkUtils.buildPosterUrl(movie.getmPoster_path(), "w342");
-                Picasso.with(this)
+                Picasso.with(getActivity())
                         .load(mPosterRequestUrl2.toString())
                         .error(R.drawable.ic_local_movies)
                         .into(miv_thumbnail);
@@ -119,7 +140,7 @@ public class MovieInformation extends AppCompatActivity {
                     {
                         misFavorite = false;
                         Uri uri = FavoriteMovieContract.FavoriteMovie.buildMovieUri(movie.getmId());
-                        int result = getContentResolver().delete(uri, null, null);
+                        int result = getActivity().getContentResolver().delete(uri, null, null);
 
                         //delete image too
                         File file = new File(Environment.getExternalStorageDirectory().getPath() +File.separator + "MyMoviesPosters","Movie_"+movie.getmId()+".jpg");
@@ -135,10 +156,10 @@ public class MovieInformation extends AppCompatActivity {
                         misFavorite = true;
                         Uri uri =FavoriteMovieContract.FavoriteMovie.CONTENT_URI;
                         ContentValues contentValues = transformMovieToContentValues(movie);
-                        Uri result = getContentResolver().insert(uri,contentValues );
+                        Uri result = getActivity().getContentResolver().insert(uri,contentValues );
 
                         //save image too : https://stackoverflow.com/questions/32799353/saving-image-from-url-using-picasso
-                        Picasso.with(getApplicationContext())
+                        Picasso.with(getActivity().getApplicationContext())
                                 .load(mPosterRequestUrl2.toString())
                                 .into(generateTarget(movie.getmId()));
 
@@ -153,6 +174,7 @@ public class MovieInformation extends AppCompatActivity {
         }
 
         Log.i(TAG, "End MovieInformation");
+        return view;
     }
 
     private Target generateTarget(final int nameFile){
@@ -204,7 +226,7 @@ public class MovieInformation extends AppCompatActivity {
 
     private void showToast(String message)
     {
-        Toast toast =Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+        Toast toast =Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
         View viewtoast = toast.getView();
         //viewtoast.setBackgroundColor(Color.TRANSPARENT);
         //TextView text = (TextView) viewtoast.findViewById(android.R.id.message);
@@ -238,7 +260,7 @@ public class MovieInformation extends AppCompatActivity {
         String[] projection = {FavoriteMovieContract.FavoriteMovie.COLUMN_MOVIE_ID};
         boolean isfavorite = false;
 
-        Cursor cursor = getContentResolver().query(uri,projection,null,null,null );
+        Cursor cursor = getActivity().getContentResolver().query(uri,projection,null,null,null );
 
         if (cursor.getCount() > 0){
             isfavorite = true;

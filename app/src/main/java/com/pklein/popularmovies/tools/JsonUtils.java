@@ -3,6 +3,8 @@ package com.pklein.popularmovies.tools;
 import android.util.Log;
 
 import com.pklein.popularmovies.data.Movie;
+import com.pklein.popularmovies.data.Review;
+import com.pklein.popularmovies.data.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,8 +18,10 @@ public class JsonUtils {
     private static final String TAG= "JsonUtils";
 
     private static final String JSON_RESULTS = "results";
-    private static final String JSON_VOTE_COUNT = "vote_count";
     private static final String JSON_ID = "id";
+
+    //for movie Information
+    private static final String JSON_VOTE_COUNT = "vote_count";
     private static final String JSON_VIDEO = "video";
     private static final String JSON_VOTE_AVERAGE = "vote_average";
     private static final String JSON_TITLE = "title";
@@ -31,6 +35,20 @@ public class JsonUtils {
     private static final String JSON_OVERIEW = "overview";
     private static final String JSON_RELEASE_DATE = "release_date";
 
+    //for Reviews
+    private static final String JSON_AUTHOR = "author";
+    private static final String JSON_CONTENT = "content";
+    private static final String JSON_URL = "url";
+
+    // for TRAILERS
+    private static final String JSON_ISO_639_1 = "iso_639_1";
+    private static final String JSON_ISO_3166_1 = "iso_3166_1";
+    private static final String JSON_KEY = "key";
+    private static final String JSON_NAME = "name";
+    private static final String JSON_SITE = "site";
+    private static final String JSON_SIZE = "size";
+    private static final String JSON_TYPE = "type";
+
     public static List<Movie> parseMovieJson(String json) throws JSONException {
 
         Log.i(TAG, "Start parseMovieJson");
@@ -43,7 +61,6 @@ public class JsonUtils {
 
             for (int i = 0; i < ListMoviesJson.length(); i++) {
 
-                Log.i(TAG, "title " + ListMoviesJson.getJSONObject(i).optString(JSON_TITLE));
                 JSONObject obj = ListMoviesJson.getJSONObject(i);
                 Movie mov = new Movie();
 
@@ -73,8 +90,68 @@ public class JsonUtils {
             }
         }
 
-        Log.i(TAG, "End parseSandwichJson");
+        Log.i(TAG, "End parseMovieJson");
         return ListMovie;
     }
 
+    public static List<Review> parseReviewJson(String json) throws JSONException {
+        Log.i(TAG, "Start parseReviewJson");
+
+        JSONObject ReviewJson = new JSONObject(json);
+        List<Review> ListReviews = new ArrayList<>();
+
+        if (ReviewJson.has(JSON_RESULTS)) {
+            JSONArray ListReviewsJson = ReviewJson.getJSONArray(JSON_RESULTS);
+
+            for (int i = 0; i < ListReviewsJson.length(); i++) {
+
+                JSONObject obj = ListReviewsJson.getJSONObject(i);
+                Review rev = new Review();
+
+                if(obj.has(JSON_AUTHOR)){rev.setmAuthor(obj.optString(JSON_AUTHOR));}
+                if(obj.has(JSON_CONTENT)){rev.setmContent(obj.optString(JSON_CONTENT));}
+                if(obj.has(JSON_ID)){rev.setmId(obj.optString(JSON_ID));}
+                if(obj.has(JSON_URL)){rev.setmUrl(obj.optString(JSON_URL));}
+
+                Log.i(TAG, "INFO :"+obj.optString(JSON_AUTHOR));
+                ListReviews.add(rev);
+            }
+        }
+
+        Log.i(TAG, "End parseReviewJson");
+        return ListReviews;
+    }
+
+    public static List<Trailer> parseTrailerJson(String json) throws JSONException {
+        Log.i(TAG, "Start parseTrailerJson");
+
+        JSONObject ReviewJson = new JSONObject(json);
+        List<Trailer> ListTrailers = new ArrayList<>();
+
+        if (ReviewJson.has(JSON_RESULTS)) {
+            JSONArray ListReviewsJson = ReviewJson.getJSONArray(JSON_RESULTS);
+
+            for (int i = 0; i < ListReviewsJson.length(); i++) {
+
+                JSONObject obj = ListReviewsJson.getJSONObject(i);
+                Trailer trailer = new Trailer();
+
+                if(obj.has(JSON_ID)){trailer.setmId(obj.optString(JSON_ID));}
+                if(obj.has(JSON_ISO_639_1)){trailer.setmIso_639_1(obj.optString(JSON_ISO_639_1));}
+                if(obj.has(JSON_ISO_3166_1)){trailer.setmIso_3166_1(obj.optString(JSON_ISO_3166_1));}
+                if(obj.has(JSON_KEY)){trailer.setmKey(obj.optString(JSON_KEY));}
+                if(obj.has(JSON_NAME)){trailer.setmName(obj.optString(JSON_NAME));}
+                if(obj.has(JSON_SITE)){trailer.setmSite(obj.optString(JSON_SITE));}
+                if(obj.has(JSON_TYPE)){trailer.setmType(obj.optString(JSON_TYPE));}
+                if(obj.has(JSON_SIZE)){trailer.setmSize(obj.optInt(JSON_SIZE));}
+
+                Log.i(TAG, "INFO :"+obj.optString(JSON_NAME));
+
+                ListTrailers.add(trailer);
+            }
+        }
+
+        Log.i(TAG, "End parseTrailerJson");
+        return ListTrailers;
+    }
 }

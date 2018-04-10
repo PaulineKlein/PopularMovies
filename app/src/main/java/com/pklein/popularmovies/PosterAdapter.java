@@ -62,7 +62,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
             .into(posterAdapterViewHolder.movieIv);
         }
         else {
-            URL posterRequestUrl = NetworkUtils.buildPosterUrl(mMovieData.get(position).getmPoster_path(), "w342");
+            URL posterRequestUrl = NetworkUtils.buildPosterUrl(MovieSelected.getmPoster_path(), "w342");
             String movieUrlForThisPos = posterRequestUrl.toString();
             Picasso.with(context)
                     .load(movieUrlForThisPos)
@@ -74,7 +74,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
             @Override
             public void onClick(View v) {
-            Intent startChildActivityIntent = new Intent(context, MovieInformation.class);
+            Intent startChildActivityIntent = new Intent(context, MovieInformationActivity.class);
             if(MovieSelected != null)
             {
                 startChildActivityIntent.putExtra("Movie", MovieSelected);

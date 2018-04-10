@@ -27,7 +27,7 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".MovieInformation"
+        <activity android:name=".MovieInformationActivity"
             android:label="@string/title_MovieInformation"
             android:parentActivityName=".MainActivity">
             <meta-data
