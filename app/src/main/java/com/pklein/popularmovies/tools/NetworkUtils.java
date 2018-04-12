@@ -24,6 +24,7 @@ public final class NetworkUtils {
 
     private static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/";
     private static final String BASE_LIST_URL = "http://api.themoviedb.org/3/movie/";
+    private static final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 
     /* API KEY !! */
     private static final String API_KEY = "api_key";
@@ -134,5 +135,11 @@ public final class NetworkUtils {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean Connect = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
             return Connect;
+    }
+
+    public static Uri getYoutubeUri(String key){
+        String url = BASE_YOUTUBE_URL+key;
+        Uri webpage = Uri.parse(url);
+        return webpage;
     }
 }

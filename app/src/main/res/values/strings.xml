@@ -5,6 +5,7 @@
 
     <!-- Content descriptions-->
     <string name="movie_picture_content_description">Movie Picture</string>
+    <string name="play_picture_content_description">Play Trailer Picture</string>
     <string name="favorite_picture_content_description">Button to add Movie to favorite</string>
     <string name="rating_bar_content_description">Vote Average</string>
     <string name="title_content_description">Title</string>
@@ -16,8 +17,8 @@
     <string name="author_label"> Author</string>
     <string name="content_label"> Content</string>
     <string name="name_label"> Name</string>
-    <string name="url_label"> URL</string>
-    <string name="error_message"> An error has occurred. Please check your Internet Connection.  </string>
+    <string name="language_label"> Language : </string>
+    <string name="error_message"> An error has occurred. Please check your Internet Connection.</string>
 
     <plurals name="votes">
         <item quantity="one">%d vote</item>
