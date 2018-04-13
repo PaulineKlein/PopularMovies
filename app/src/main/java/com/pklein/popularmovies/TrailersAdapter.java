@@ -1,6 +1,5 @@
 package com.pklein.popularmovies;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.pklein.popularmovies.data.Review;
 import com.pklein.popularmovies.data.Trailer;
 import com.pklein.popularmovies.tools.NetworkUtils;
 
@@ -55,21 +53,21 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
         trailersAdapterViewHolder.tvName.setText(trailerSelected.getmName());
         trailersAdapterViewHolder.tvLanguage.setText(context.getString(R.string.language_label)+" "+trailerSelected.getmIso_639_1());
-        trailersAdapterViewHolder.tvClip.setText(trailerSelected.getmType()+" "+trailerSelected.getmSite()+" ("+trailerSelected.getmSize()+") ");
+        trailersAdapterViewHolder.tvClip.setText(trailerSelected.getmType()+" "+trailerSelected.getmSite()+" ("+trailerSelected.getmSize()+"p)");
 
         trailersAdapterViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-            if(trailerSelected != null)
-            {
-                Uri webpage = NetworkUtils.getYoutubeUri(trailerSelected.getmKey());
-                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                if (intent.resolveActivity(context.getPackageManager()) != null) {
-                    context.startActivity(intent);
+                if(trailerSelected != null)
+                {
+                    Uri webpage = NetworkUtils.getYoutubeUri(trailerSelected.getmKey());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                    if (intent.resolveActivity(context.getPackageManager()) != null) {
+                        context.startActivity(intent);
+                    }
                 }
-            }
             }
         });
 

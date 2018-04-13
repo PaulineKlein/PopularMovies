@@ -56,7 +56,6 @@ public class MovieInformation extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     //   mPage = getArguments().getInt(ARG_PAGE);
     }
 
     @Override
@@ -72,8 +71,6 @@ public class MovieInformation extends Fragment {
         RatingBar mratingBar;
 
         Log.i(TAG, "Start MovieInformation");
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.movie_information);
         View view = inflater.inflate(R.layout.movie_information, container, false);
 
         mtv_title = view.findViewById(R.id.tv_title);
@@ -227,10 +224,6 @@ public class MovieInformation extends Fragment {
     private void showToast(String message)
     {
         Toast toast =Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
-        View viewtoast = toast.getView();
-        //viewtoast.setBackgroundColor(Color.TRANSPARENT);
-        //TextView text = (TextView) viewtoast.findViewById(android.R.id.message);
-        //text.setTextColor(Color.parseColor("#8a9aef"));
         toast.show();
     }
 

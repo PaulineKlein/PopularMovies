@@ -1,6 +1,5 @@
 package com.pklein.popularmovies;
 
-
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -73,7 +72,6 @@ public class MovieTrailers extends Fragment {
 
         loadTrailerData(movie.getmId());
 
-
         Log.i(TAG, "End MovieInformation");
         return mTrailerview;
     }
@@ -94,7 +92,6 @@ public class MovieTrailers extends Fragment {
         @Override
         protected List<Trailer> doInBackground(Integer... params) {
 
-            /* If there's no filter, there's nothing to look up. */
             if (params.length == 0) {
                 return null;
             }
@@ -129,7 +126,6 @@ public class MovieTrailers extends Fragment {
             }
         }
     }
-
 
     private void showReviewListView() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);

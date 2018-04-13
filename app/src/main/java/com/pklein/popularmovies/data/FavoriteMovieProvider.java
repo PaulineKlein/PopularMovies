@@ -11,8 +11,6 @@ import android.net.Uri;
 public class FavoriteMovieProvider extends ContentProvider {
 
     /* This class has been set up thanks to code from https://github.com/udacity/android-content-provider */
-
-    private static final String TAG = FavoriteMovieProvider.class.getSimpleName();
     private static final UriMatcher mUriMatcher = buildUriMatcher();
     private FavoriteMovieDbHelper mFMDbHelper;
 
@@ -108,10 +106,8 @@ public class FavoriteMovieProvider extends ContentProvider {
                 }
                 break;
             }
-
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
-
             }
         }
         getContext().getContentResolver().notifyChange(uri, null);
@@ -174,5 +170,4 @@ public class FavoriteMovieProvider extends ContentProvider {
 
         return numUpdated;
     }
-
 }

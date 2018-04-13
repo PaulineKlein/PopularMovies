@@ -30,7 +30,7 @@
     <!-- Toast -->
     <string name="delete_favorite"> Delete from Favorite </string>
     <string name="save_favorite"> Saved as Favorite </string>
-    <string name="error_favorite"> An Error has Occured</string>
+    <string name="error_favorite"> An Error has Occurred</string>
 
     <!-- Menu -->
     <string name="action_top_rated"> Top Rated </string>

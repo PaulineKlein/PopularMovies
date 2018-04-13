@@ -3,16 +3,12 @@ package com.pklein.popularmovies.tools;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
 import com.pklein.popularmovies.BuildConfig;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -130,16 +126,27 @@ public final class NetworkUtils {
         }
     }
 
+    /**
+     * This method allows to know whether the phone is connected to internet or not
+     *
+     * @param cm keep informations of phone connections
+     * @return returns true if the phone is connected to internet, false otherwhise
+     */
     public static boolean isconnected(ConnectivityManager cm){
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean Connect = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-            return Connect;
+        boolean phoneConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+            return phoneConnected;
     }
 
+    /**
+     * This method gives the URL used by Youtube to watch a Trailer
+     *
+     * @param key  The String key that identify the video
+     * @return URL of the trailer to launch
+     */
     public static Uri getYoutubeUri(String key){
         String url = BASE_YOUTUBE_URL+key;
-        Uri webpage = Uri.parse(url);
-        return webpage;
+        return Uri.parse(url);
     }
 }

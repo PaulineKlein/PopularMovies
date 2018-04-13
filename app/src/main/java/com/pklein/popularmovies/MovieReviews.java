@@ -93,7 +93,6 @@ public class MovieReviews extends Fragment {
         @Override
         protected List<Review> doInBackground(Integer... params) {
 
-            /* If there's no filter, there's nothing to look up. */
             if (params.length == 0) {
                 return null;
             }
@@ -128,8 +127,6 @@ public class MovieReviews extends Fragment {
             }
         }
     }
-
-
 
 
     private void showReviewListView() {

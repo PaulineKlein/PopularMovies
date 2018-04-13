@@ -1,6 +1,5 @@
 package com.pklein.popularmovies;
 
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,12 +43,10 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
     @Override
     public void onBindViewHolder( ReviewsAdapter.ReviewsAdapterViewHolder reviewsAdapterViewHolder, int position) {
 
-        final Context context = reviewsAdapterViewHolder.itemView.getContext();
         final Review ReviewSelected = mReviewData.get(position);
 
         reviewsAdapterViewHolder.tvAuthor.setText(ReviewSelected.getmAuthor());
         reviewsAdapterViewHolder.tvContent.setText(ReviewSelected.getmContent());
-
     }
 
     @Override

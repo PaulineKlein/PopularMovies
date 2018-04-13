@@ -23,7 +23,6 @@ public class FavoriteMovieDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // create the table
         final String SQL_CREATE_WAITLIST_TABLE = "CREATE TABLE " + FavoriteMovieContract.FavoriteMovie.TABLE_NAME + " (" +
-                //FavoriteMovieContract.FavoriteMovie._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 FavoriteMovieContract.FavoriteMovie.COLUMN_MOVIE_ID + " INTEGER NOT NULL PRIMARY KEY, " +
                 FavoriteMovieContract.FavoriteMovie.COLUMN_TITLE + " TEXT NOT NULL, " +
                 FavoriteMovieContract.FavoriteMovie.COLUMN_ORIGINAL_TITLE + " TEXT NULL, " +
@@ -42,12 +41,10 @@ public class FavoriteMovieDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_WAITLIST_TABLE);
     }
 
-    // Override the onUpgrade method
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         Log.w(TAG, "Upgrading database from version " + i + " to " + i1 + ". OLD DATA WILL BE DESTROYED");
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FavoriteMovieContract.FavoriteMovie.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
-
 }

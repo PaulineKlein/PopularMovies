@@ -32,7 +32,7 @@ public class JsonUtils {
     private static final String JSON_GENRE_IDS = "genre_ids";
     private static final String JSON_BACKDROP_PATH = "backdrop_path";
     private static final String JSON_ADULT = "adult";
-    private static final String JSON_OVERIEW = "overview";
+    private static final String JSON_OVERVIEW = "overview";
     private static final String JSON_RELEASE_DATE = "release_date";
 
     //for Reviews
@@ -49,6 +49,12 @@ public class JsonUtils {
     private static final String JSON_SIZE = "size";
     private static final String JSON_TYPE = "type";
 
+    /**
+     * This method returns a list of Movie described inside a JSON file
+     *
+     * @param json  The Json with the list of the movies to parse
+     * @return List<Movie> : a list of Movie objects
+     */
     public static List<Movie> parseMovieJson(String json) throws JSONException {
 
         Log.i(TAG, "Start parseMovieJson");
@@ -75,7 +81,7 @@ public class JsonUtils {
                 if(obj.has(JSON_ORIGINAL_TITLE)){ mov.setmOriginal_title(obj.optString(JSON_ORIGINAL_TITLE));}
                 if(obj.has(JSON_BACKDROP_PATH)){ mov.setmBackdrop_path(obj.optString(JSON_BACKDROP_PATH));}
                 if(obj.has(JSON_ADULT)){ mov.setmAdult(obj.optBoolean(JSON_ADULT));}
-                if(obj.has(JSON_OVERIEW)){ mov.setmOverview(obj.optString(JSON_OVERIEW));}
+                if(obj.has(JSON_OVERVIEW)){ mov.setmOverview(obj.optString(JSON_OVERVIEW));}
                 if(obj.has(JSON_RELEASE_DATE)){ mov.setmRelease_date(obj.optString(JSON_RELEASE_DATE));}
 
                 if(obj.has(JSON_GENRE_IDS)){
@@ -94,6 +100,12 @@ public class JsonUtils {
         return ListMovie;
     }
 
+    /**
+     * This method returns a list of Reviews described inside a JSON file
+     *
+     * @param json  The Json with the list of the reviews to parse
+     * @return List<Review> : a list of Review objects
+     */
     public static List<Review> parseReviewJson(String json) throws JSONException {
         Log.i(TAG, "Start parseReviewJson");
 
@@ -122,6 +134,12 @@ public class JsonUtils {
         return ListReviews;
     }
 
+    /**
+     * This method returns a list of Trailers described inside a JSON file
+     *
+     * @param json  The Json with the list of the trailers to parse
+     * @return List<Trailer> : a list of Trailer objects
+     */
     public static List<Trailer> parseTrailerJson(String json) throws JSONException {
         Log.i(TAG, "Start parseTrailerJson");
 

@@ -3,6 +3,7 @@ package com.pklein.popularmovies;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
@@ -18,13 +19,12 @@ public class MovieInformationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_info_tab);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(new MovieFragmentPagerAdapter(getSupportFragmentManager(),MovieInformationActivity.this));
 
-        // Give the TabLayout the ViewPager
-        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout = findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#FF4081"));
+        tabLayout.setTabTextColors(Color.WHITE, ContextCompat.getColor(this,R.color.colorAccent));
     }
 
     @Override
